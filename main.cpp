@@ -27,12 +27,10 @@ int main() {
             std::cout << "[ERROR] Entrada invalida. Ingrese un numero del 1 al 7.\n";
             continue;
         }
-
         if (opcion >= 2 && opcion <= 6 && !gestor.isArchivoIncidentesCargado() && opcion != 3) {
             std::cout << "[ERROR] Debe cargar 'incidentes.csv' (Opción 1) antes de acceder a esta función.\n";
             continue;
         }
-
         switch (opcion) {
             case 1:
                 gestor.cargarIncidentes("incidentes.csv");
@@ -60,6 +58,5 @@ int main() {
                 break;
         }
     } while (opcion != 7);
-
     return 0;
 }

@@ -10,5 +10,4 @@ struct Nodo {
     // Inicializa el dato y asigna el puntero siguiente a nulo
     explicit Nodo(T pValor) : aDato(pValor), apSiguiente(nullptr) {}
 };
-
 #endif

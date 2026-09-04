@@ -1,13 +1,10 @@
 #include "Analista.hpp"
 
 Analista::Analista(std::string pNombre) : aNombre(pNombre) {}
-
 std::string Analista::getNombre() const { return aNombre; }
-
 void Analista::agregarSeveridad(std::string pSeveridad) {
     aSeveridadesAdmitidas.agregarFinal(pSeveridad);
 }
-
 bool Analista::admiteSeveridad(std::string pSeveridad) const {
     Nodo<std::string>* aux = aSeveridadesAdmitidas.getCabeza();
     while (aux != nullptr) {
@@ -16,27 +13,21 @@ bool Analista::admiteSeveridad(std::string pSeveridad) const {
     }
     return false;
 }
-
 bool Analista::puedeRecibirMasCasos() const {
     return aAsignadosSinResolver.getTamano() < 3;
 }
-
 void Analista::asignarIncidente(Incidente* pIncidente) {
     aAsignadosSinResolver.agregarFinal(pIncidente);
 }
-
 int Analista::getCantidadAsignadosSinResolver() const {
     return aAsignadosSinResolver.getTamano();
 }
-
 int Analista::getCantidadResueltos() const {
     return aResueltos.getTamano();
 }
-
 ListaEnlazada<std::string> Analista::getSeveridadesAdmitidas() const { return aSeveridadesAdmitidas; }
 ListaEnlazada<Incidente*> Analista::getAsignadosSinResolver() const { return aAsignadosSinResolver; }
 ListaEnlazada<Incidente*> Analista::getResueltos() const { return aResueltos; }
-
 static int obtenerPesoSeveridad(std::string sev) {
     if (sev == "CRITICA") return 4;
     if (sev == "ALTA") return 3;
@@ -44,16 +35,12 @@ static int obtenerPesoSeveridad(std::string sev) {
     if (sev == "BAJA") return 1;
     return 0;
 }
-
 std::string Analista::avanzarHora() {
     if (aAsignadosSinResolver.esVacia()) {
         return "El analista " + aNombre + " no atendio ningun incidente.";
     }
-
-    // 1. Revisar si hay un caso ya iniciado que no deba interrumpirse
     Nodo<Incidente*>* aux = aAsignadosSinResolver.getCabeza();
     Incidente* incAAtender = nullptr;
-
     while (aux != nullptr) {
         if (aux->aDato->getHorasTrabajadas() > 0) {
             incAAtender = aux->aDato;
@@ -61,13 +48,10 @@ std::string Analista::avanzarHora() {
         }
         aux = aux->apSiguiente;
     }
-
-    // 2. Si ninguno ha iniciado, seleccionar el de mayor severidad (y más antiguo si empatan)
     if (incAAtender == nullptr) {
         aux = aAsignadosSinResolver.getCabeza();
         incAAtender = aux->aDato;
         aux = aux->apSiguiente;
-
         while (aux != nullptr) {
             Incidente* cand = aux->aDato;
             int pesoCand = obtenerPesoSeveridad(cand->getSeveridad());
@@ -83,10 +67,7 @@ std::string Analista::avanzarHora() {
             aux = aux->apSiguiente;
         }
     }
-
-    // 3. Trabajar 1 hora en el incidente elegido
     incAAtender->incrementarTrabajo();
-
     if (incAAtender->estaCompletado()) {
         aAsignadosSinResolver.eliminar(incAAtender);
         aResueltos.agregarFinal(incAAtender);

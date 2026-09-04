@@ -12,11 +12,9 @@ public:
     ~ListaEnlazada() {
         limpiar();
     }
-
     bool esVacia() const {
         return apCabeza == nullptr;
     }
-
     void limpiar() {
         Nodo<Dato>* actual = apCabeza;
         while (actual != nullptr) {
@@ -27,7 +25,6 @@ public:
         apCabeza = nullptr;
         aTamano = 0;
     }
-
     void agregarFinal(Dato pValor) {
         Nodo<Dato>* nuevo = new Nodo<Dato>(pValor);
         if (apCabeza == nullptr) {
@@ -41,7 +38,6 @@ public:
         }
         aTamano++;
     }
-
     bool eliminar(Dato pValor) {
         if (apCabeza == nullptr) return false;
 
@@ -52,12 +48,10 @@ public:
             aTamano--;
             return true;
         }
-
         Nodo<Dato>* actual = apCabeza;
         while (actual->apSiguiente != nullptr && actual->apSiguiente->aDato != pValor) {
             actual = actual->apSiguiente;
         }
-
         if (actual->apSiguiente != nullptr) {
             Nodo<Dato>* temp = actual->apSiguiente;
             actual->apSiguiente = temp->apSiguiente;
@@ -65,13 +59,10 @@ public:
             aTamano--;
             return true;
         }
-
         return false;
     }
-
     int getTamano() const { return aTamano; }
     Nodo<Dato>* getCabeza() const { return apCabeza; }
-
     template <typename Comparador>
     void ordenar(Comparador comp) {
         if (apCabeza == nullptr || apCabeza->apSiguiente == nullptr) return;

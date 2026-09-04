@@ -1,6 +1,5 @@
 #ifndef GESTORSISTEMA_HPP
 #define GESTORSISTEMA_HPP
-
 #include <string>
 #include "ListaEnlazada.hpp"
 #include "ColaFIFO.hpp"
