@@ -10,4 +10,16 @@ El proyecto fue desarrollado utilizando el estándar **C++11**.
 ```powershell
 g++ -std=c++11 main.cpp Analista.cpp GestorSistema.cpp Incidente.cpp -o programa.exe
 
-Declaración de uso de IA: Especificar las herramientas utilizadas (ej. ChatGPT/Gemini) y justificar su uso únicamente para interpretación de errores, sintaxis o documentación (recordando que el enunciado prohíbe usarla para generar el diseño o código principal).
+Explicación del uso: Se utilizó Gemini como apoyo exclusivo para la interpretación de errores de compilación de g++, aclaración de sintaxis en C++11 y asistencia en la redacción de la documentación interna/externa (como este README.md). No se utilizó IA para el diseño conceptual ni la lógica principal de la aplicación
+
+Instrucciones de Ejecución
+Asegúrese de que los archivos analistas.csv e incidentes.csv se encuentren en la misma carpeta que el ejecutable.
+
+Compile el proyecto utilizando el comando indicado.
+
+Ejecute el programa en la terminal:
+
+En Windows (PowerShell/CMD):
+
+PowerShell
+.\programa.exe
