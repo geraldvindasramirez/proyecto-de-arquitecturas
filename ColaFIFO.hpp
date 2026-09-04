@@ -1,7 +1,6 @@
 #ifndef COLAFIFO_HPP
 #define COLAFIFO_HPP
-
-#include "Nodo.h"
+#include "Nodo.hpp"
 
 template <typename Dato>
 class ColaFIFO {
@@ -9,20 +8,16 @@ private:
     Nodo<Dato>* apFrente;
     Nodo<Dato>* apFondo;
     int aTamano;
-
 public:
     ColaFIFO() : apFrente(nullptr), apFondo(nullptr), aTamano(0) {}
-
     ~ColaFIFO() {
         while (!esVacia()) {
             desencolar();
         }
     }
-
     bool esVacia() const {
         return apFrente == nullptr;
     }
-
     void encolar(Dato pValor) {
         Nodo<Dato>* nuevo = new Nodo<Dato>(pValor);
         if (esVacia()) {
@@ -33,7 +28,6 @@ public:
         }
         aTamano++;
     }
-
     Dato desencolar() {
         if (esVacia()) return Dato();
         Nodo<Dato>* temp = apFrente;
@@ -46,8 +40,6 @@ public:
         aTamano--;
         return valor;
     }
-
     int getTamano() const { return aTamano; }
 };
-
 #endif // COLAFIFO_HPP

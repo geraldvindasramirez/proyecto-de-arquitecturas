@@ -1,21 +1,17 @@
 #ifndef LISTAENLAZADA_HPP
 #define LISTAENLAZADA_HPP
-
-#include "Nodo.h"
+#include "Nodo.hpp"
 
 template <typename Dato>
 class ListaEnlazada {
 private:
     Nodo<Dato>* apCabeza;
     int aTamano;
-
 public:
     ListaEnlazada() : apCabeza(nullptr), aTamano(0) {}
-
     ~ListaEnlazada() {
         limpiar();
     }
-
     void limpiar() {
         Nodo<Dato>* actual = apCabeza;
         while (actual != nullptr) {
@@ -26,7 +22,6 @@ public:
         apCabeza = nullptr;
         aTamano = 0;
     }
-
     void agregarFinal(Dato pValor) {
         Nodo<Dato>* nuevo = new Nodo<Dato>(pValor);
         if (apCabeza == nullptr) {
@@ -40,18 +35,13 @@ public:
         }
         aTamano++;
     }
-
     int getTamano() const { return aTamano; }
     Nodo<Dato>* getCabeza() const { return apCabeza; }
-
-    // Algoritmo de ordenamiento para las estadísticas
     template <typename Comparador>
     void ordenar(Comparador comp) {
         if (apCabeza == nullptr || apCabeza->apSiguiente == nullptr) return;
-
         Nodo<Dato>* ordenada = nullptr;
         Nodo<Dato>* actual = apCabeza;
-
         while (actual != nullptr) {
             Nodo<Dato>* siguiente = actual->apSiguiente;
             if (ordenada == nullptr || comp(actual->aDato, ordenada->aDato)) {
@@ -70,5 +60,4 @@ public:
         apCabeza = ordenada;
     }
 };
-
 #endif // LISTAENLAZADA_HPP

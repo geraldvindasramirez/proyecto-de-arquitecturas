@@ -1,0 +1,6 @@
+id,descripcion,severidad,horasRequeridas
+INC001,Fallo en servidor de base de datos,Alta,4
+INC002,Error de inicio de sesion en app movil,Media,2
+INC003,Actualización de certificado SSL,Baja,1
+INC004,Vulnerabilidad crítica en API de pagos,Alta,5
+INC005,Lentitud en la carga de reportes,Media,3
