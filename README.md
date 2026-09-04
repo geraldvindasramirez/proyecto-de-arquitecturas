@@ -57,7 +57,8 @@ CREAR,INC2,CRITICA,,Caida total del servidor principal
 ASIGNAR,INC2,CRITICA,Bruno,Caida total del servidor principal
 Declaración de Uso de IA
 Se utilizó IA (Gemini / ChatGPT) como herramienta de apoyo durante el desarrollo, específicamente para:
+Consultas técnicas puntuales sobre errores de sintaxis y flags de compilación en el estándar C++11.
 
-Depurar y corregir errores de compilación (sintaxis de plantillas C++, resolución de inclusión cíclica, verificación de guardas de inclusión #ifndef / #define).
+Verificación de la consistencia en el formato de comentarios y encabezados de documentación de archivos.
 
-Resolver dudas conceptuales sobre la integración entre las estructuras de datos propias (ListaEnlazada, ColaFIFO) y las entidades del dominio.
+Aclaración de dudas teóricas sobre el comportamiento de buffers de entrada en consola y manejo de punteros en plantillas.
