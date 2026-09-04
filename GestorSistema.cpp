@@ -2,32 +2,38 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <algorithm>
-#include <cctype>
 
-// Función auxiliar para convertir cadenas a mayúsculas
+// Función auxiliar propia para normalizar a mayúsculas sin <algorithm>
 static std::string normalizarTexto(std::string str) {
-    std::transform(str.begin(), str.end(), str.begin(), ::toupper);
+    for (size_t i = 0; i < str.length(); i++) {
+        if (str[i] >= 'a' && str[i] <= 'z') {
+            str[i] = str[i] - ('a' - 'A');
+        }
+    }
     return str;
 }
 
 GestorSistema::GestorSistema() 
     : aArchivoIncidentesCargado(false), aContadorOrdenLlegada(0) {}
+
 GestorSistema::~GestorSistema() {
     Nodo<Analista*>* ptrA = aAnalistas.getCabeza();
     while (ptrA != nullptr) {
         delete ptrA->aDato;
         ptrA = ptrA->apSiguiente;
     }
+
     Nodo<Incidente*>* ptrI = aTodosLosIncidentes.getCabeza();
     while (ptrI != nullptr) {
         delete ptrI->aDato;
         ptrI = ptrI->apSiguiente;
     }
 }
+
 bool GestorSistema::isArchivoIncidentesCargado() const {
     return aArchivoIncidentesCargado;
 }
+
 Analista* GestorSistema::buscarAnalista(std::string pNombre) {
     Nodo<Analista*>* aux = aAnalistas.getCabeza();
     while (aux != nullptr) {
@@ -36,6 +42,7 @@ Analista* GestorSistema::buscarAnalista(std::string pNombre) {
     }
     return nullptr;
 }
+
 Incidente* GestorSistema::buscarIncidente(std::string pId) {
     Nodo<Incidente*>* aux = aTodosLosIncidentes.getCabeza();
     while (aux != nullptr) {
@@ -44,14 +51,17 @@ Incidente* GestorSistema::buscarIncidente(std::string pId) {
     }
     return nullptr;
 }
+
 bool GestorSistema::cargarAnalistas(std::string pRuta) {
     std::ifstream archivo(pRuta);
     if (!archivo.is_open()) return false;
+
     std::string linea;
     bool primeraLinea = true;
     while (std::getline(archivo, linea)) {
         if (linea.empty()) continue;
-        if (primeraLinea) { primeraLinea = false; continue; } // Omitir encabezado
+        if (primeraLinea) { primeraLinea = false; continue; }
+
         std::stringstream ss(linea);
         std::string nombre, severidadesStr;
         if (std::getline(ss, nombre, ',') && std::getline(ss, severidadesStr)) {
@@ -67,9 +77,10 @@ bool GestorSistema::cargarAnalistas(std::string pRuta) {
     archivo.close();
     return true;
 }
+
 bool GestorSistema::cargarIncidentes(std::string pRuta) {
     if (aArchivoIncidentesCargado) {
-        std::cout << "[ERROR] El archivo de incidentes ya fue cargado previamente.\n";
+        std::cout << "[ERROR] El archivo 'incidentes.csv' ya fue cargado previamente.\n";
         return false;
     }
     std::ifstream archivo(pRuta);
@@ -77,34 +88,34 @@ bool GestorSistema::cargarIncidentes(std::string pRuta) {
         std::cout << "[ERROR] No se pudo abrir el archivo '" << pRuta << "'.\n";
         return false;
     }
+
     std::string linea;
     bool primeraLinea = true;
     int contadorCargados = 0;
+
     while (std::getline(archivo, linea)) {
         if (linea.empty()) continue;
-        if (primeraLinea) { primeraLinea = false; continue; } // Omitir encabezado
+        if (primeraLinea) { primeraLinea = false; continue; }
+
         std::stringstream ss(linea);
-        std::string col1, col2, col3, col4;
-        std::getline(ss, col1, ',');
-        std::getline(ss, col2, ',');
-        std::getline(ss, col3, ',');
-        std::getline(ss, col4, ',');
-        if (col1 == "CREAR") {
-            std::string col5;
-            std::getline(ss, col5, ',');
-            std::string id = col2;
-            std::string severidad = normalizarTexto(col3);
-            int horas = 1;
-            try { horas = std::stoi(col4); } catch (...) { horas = 1; }
-            std::string descripcion = col5;
-            Incidente* inc = new Incidente(id, descripcion, severidad, horas, aContadorOrdenLlegada++);
+        std::string tipo, id, severidad, analistaNom, descripcion;
+
+        std::getline(ss, tipo, ',');
+        std::getline(ss, id, ',');
+        std::getline(ss, severidad, ',');
+        std::getline(ss, analistaNom, ',');
+        std::getline(ss, descripcion, ',');
+
+        tipo = normalizarTexto(tipo);
+
+        if (tipo == "CREAR") {
+            severidad = normalizarTexto(severidad);
+            Incidente* inc = new Incidente(id, descripcion, severidad, aContadorOrdenLlegada++);
             aTodosLosIncidentes.agregarFinal(inc);
             aIncidentesPendientes.encolar(inc);
             contadorCargados++;
         } 
-        else if (col1 == "ASIGNAR") {
-            std::string id = col2;
-            std::string analistaNom = col3;
+        else if (tipo == "ASIGNAR") {
             Incidente* inc = buscarIncidente(id);
             Analista* an = buscarAnalista(analistaNom);
             if (inc != nullptr && an != nullptr && inc->getEstado() == PENDIENTE) {
@@ -113,33 +124,39 @@ bool GestorSistema::cargarIncidentes(std::string pRuta) {
             }
         } 
         else {
-            std::string id = col1;
-            std::string descripcion = col2;
-            std::string severidad = normalizarTexto(col3);
-            int horas = 1;
-            try { horas = std::stoi(col4); } catch (...) { horas = 1; }
-            Incidente* inc = new Incidente(id, descripcion, severidad, horas, aContadorOrdenLlegada++);
+            // Formato alternativo sin columna TIPO
+            std::string descAlt = id;
+            std::string sevAlt = normalizarTexto(severidad);
+            Incidente* inc = new Incidente(tipo, descAlt, sevAlt, aContadorOrdenLlegada++);
             aTodosLosIncidentes.agregarFinal(inc);
             aIncidentesPendientes.encolar(inc);
             contadorCargados++;
         }
     }
+
     archivo.close();
     aArchivoIncidentesCargado = true;
     std::cout << "[INFO] Archivo '" << pRuta << "' cargado exitosamente (" << contadorCargados << " incidentes procesados).\n";
     return true;
 }
+
 void GestorSistema::asignarIncidentes() {
     ColaFIFO<Incidente*> auxCola;
     int asignadosEnEstaRonda = 0;
+
     while (!aIncidentesPendientes.esVacia()) {
         Incidente* inc = aIncidentesPendientes.desencolar();
+
+        if (inc == nullptr) break;
+
         if (inc->getEstado() != PENDIENTE) {
-            continue; 
+            continue;
         }
+
         Analista* mejorAnalista = nullptr;
         int menorCarga = 999;
         Nodo<Analista*>* auxA = aAnalistas.getCabeza();
+
         while (auxA != nullptr) {
             Analista* a = auxA->aDato;
             if (a->admiteSeveridad(inc->getSeveridad()) && a->puedeRecibirMasCasos()) {
@@ -151,6 +168,7 @@ void GestorSistema::asignarIncidentes() {
             }
             auxA = auxA->apSiguiente;
         }
+
         if (mejorAnalista != nullptr) {
             inc->asignar(mejorAnalista->getNombre(), AUTOMATICA);
             mejorAnalista->asignarIncidente(inc);
@@ -160,12 +178,15 @@ void GestorSistema::asignarIncidentes() {
             auxCola.encolar(inc);
         }
     }
+
     while (!auxCola.esVacia()) {
         aIncidentesPendientes.encolar(auxCola.desencolar());
     }
+
     std::cout << "[RESUMEN] Incidentes asignados: " << asignadosEnEstaRonda 
               << " | Permanecen pendientes: " << aIncidentesPendientes.getTamano() << "\n";
 }
+
 void GestorSistema::avanzarHora() {
     std::cout << "\nAvanzando hora...\n";
     Nodo<Analista*>* aux = aAnalistas.getCabeza();
@@ -174,6 +195,7 @@ void GestorSistema::avanzarHora() {
         aux = aux->apSiguiente;
     }
 }
+
 void GestorSistema::mostrarIncidentes() const {
     std::cout << "\nIncidentes pendientes:\n";
     Nodo<Incidente*>* aux = aTodosLosIncidentes.getCabeza();
@@ -188,6 +210,7 @@ void GestorSistema::mostrarIncidentes() const {
         aux = aux->apSiguiente;
     }
     if (!hay) std::cout << "(Ninguno)\n";
+
     std::cout << "\nIncidentes asignados:\n";
     aux = aTodosLosIncidentes.getCabeza();
     hay = false;
@@ -203,6 +226,7 @@ void GestorSistema::mostrarIncidentes() const {
         aux = aux->apSiguiente;
     }
     if (!hay) std::cout << "(Ninguno)\n";
+
     std::cout << "\nIncidentes resueltos:\n";
     aux = aTodosLosIncidentes.getCabeza();
     hay = false;
@@ -218,6 +242,7 @@ void GestorSistema::mostrarIncidentes() const {
     }
     if (!hay) std::cout << "(Ninguno)\n";
 }
+
 void GestorSistema::mostrarAnalistas() const {
     std::cout << "\nEstado de analistas:\n";
     Nodo<Analista*>* aux = aAnalistas.getCabeza();
@@ -239,6 +264,7 @@ void GestorSistema::mostrarAnalistas() const {
         aux = aux->apSiguiente;
     }
 }
+
 void GestorSistema::mostrarEstadisticas() {
     ListaEnlazada<Analista*> listaOrdenada;
     Nodo<Analista*>* aux = aAnalistas.getCabeza();
@@ -246,12 +272,15 @@ void GestorSistema::mostrarEstadisticas() {
         listaOrdenada.agregarFinal(aux->aDato);
         aux = aux->apSiguiente;
     }
+
+    // Ordenamiento por Inserción manual de la lista
     listaOrdenada.ordenar([](Analista* a, Analista* b) {
         if (a->getCantidadResueltos() != b->getCantidadResueltos()) {
             return a->getCantidadResueltos() > b->getCantidadResueltos();
         }
         return a->getNombre() < b->getNombre();
     });
+
     std::cout << "\nEstadisticas de resolucion:\n";
     Nodo<Analista*>* ptr = listaOrdenada.getCabeza();
     while (ptr != nullptr) {

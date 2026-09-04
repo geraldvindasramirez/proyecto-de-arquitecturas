@@ -11,22 +11,23 @@ private:
     ListaEnlazada<std::string> aSeveridadesAdmitidas;
     ListaEnlazada<Incidente*> aAsignadosSinResolver;
     ListaEnlazada<Incidente*> aResueltos;
-    Incidente* apIncidenteEnAtencion;
+
 public:
-    Analista();
     Analista(std::string pNombre);
+
     std::string getNombre() const;
     void agregarSeveridad(std::string pSeveridad);
     bool admiteSeveridad(std::string pSeveridad) const;
-    int getCantidadAsignadosSinResolver() const;
-    int getCantidadResueltos() const;
     bool puedeRecibirMasCasos() const;
     void asignarIncidente(Incidente* pIncidente);
-    Incidente* seleccionarSiguienteIncidente();
+    int getCantidadAsignadosSinResolver() const;
+    int getCantidadResueltos() const;
+
+    ListaEnlazada<std::string> getSeveridadesAdmitidas() const;
+    ListaEnlazada<Incidente*> getAsignadosSinResolver() const;
+    ListaEnlazada<Incidente*> getResueltos() const;
+
     std::string avanzarHora();
-    ListaEnlazada<Incidente*>& getAsignadosSinResolver();
-    ListaEnlazada<Incidente*>& getResueltos();
-    ListaEnlazada<std::string>& getSeveridadesAdmitidas();
 };
 
 #endif // ANALISTA_HPP
